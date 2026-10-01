@@ -1,0 +1,82 @@
+---
+/**
+ * Decorative circle-and-line-mark illustration for page heroes. Fills the
+ * blank column beside the intro text on wide screens; stacks below it on
+ * narrow ones. Purely decorative (aria-hidden) - PetMark already carries no
+ * accessible name of its own here.
+ */
+import PetMark from './PetMark.astro';
+
+export interface Props {
+  pet: 'dog' | 'cat' | 'both';
+  class?: string;
+}
+
+const { pet, class: className } = Astro.props;
+---
+
+<div class:list={['hero-art', className]} aria-hidden="true">
+  {
+    pet === 'both' ? (
+      <>
+        <span class="hero-blob hero-blob--back hero-blob--dog">
+          <PetMark pet="dog" size={92} style="color: var(--c-dog);" />
+        </span>
+        <span class="hero-blob hero-blob--front hero-blob--cat">
+          <PetMark pet="cat" size={92} style="color: var(--c-cat);" />
+        </span>
+      </>
+    ) : (
+      <span class={`hero-blob hero-blob--solo hero-blob--${pet}`}>
+        <PetMark pet={pet} size={132} style={`color: var(--c-${pet});`} />
+      </span>
+    )
+  }
+</div>
+
+<style>
+  .hero-art {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 240px;
+    height: 240px;
+    flex-shrink: 0;
+    margin-inline: auto;
+  }
+
+  .hero-blob {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--c-border);
+  }
+
+  .hero-blob--solo {
+    width: 220px;
+    height: 220px;
+  }
+
+  .hero-blob--dog { background: color-mix(in srgb, var(--c-dog) 16%, var(--c-raised)); }
+  .hero-blob--cat { background: color-mix(in srgb, var(--c-cat) 16%, var(--c-raised)); }
+
+  .hero-blob--back,
+  .hero-blob--front {
+    position: absolute;
+    width: 176px;
+    height: 176px;
+  }
+
+  .hero-blob--back {
+    top: 4px;
+    left: 4px;
+  }
+
+  .hero-blob--front {
+    bottom: 4px;
+    right: 4px;
+    box-shadow: var(--shadow-card);
+  }
+</style>

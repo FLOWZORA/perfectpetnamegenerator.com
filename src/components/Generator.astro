@@ -1,0 +1,303 @@
+---
+import data from '../data/pet-name-data.json';
+import { DEFAULT_LOCALE, type Lang } from '../i18n/config';
+import { useTranslations, fill } from '../i18n';
+import { meaningIn } from '../lib/meanings';
+
+export interface Props {
+  /** 'any' shows the Dog/Cat/Mixed switch; 'dog'/'cat' lock the tool to one species. */
+  species: 'dog' | 'cat' | 'any';
+  /**
+   * Which page's heading and intro to use. Distinct from `species`, because
+   * the pet page runs the both-species tool under its own copy.
+   */
+  section: 'home' | 'dog' | 'cat' | 'pet';
+  lang?: Lang;
+}
+
+const { species, section, lang = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(lang);
+const g = t.generator;
+
+const { heading, intro } = t[section].generator;
+
+// Fantasy and Funny lead: both are styles people search for by name, so they
+// sit first rather than being buried mid-list.
+const STYLE_ORDER = [
+  'fantasy',
+  'funny',
+  'cute',
+  'strong',
+  'elegant',
+  'classic',
+  'mythical',
+  'food',
+  'modern',
+  'unique',
+] as const;
+
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const MAX_LENGTHS = [4, 5, 6, 7, 8];
+
+// Server-rendered starter names: real content for crawlers and for anyone
+// whose JavaScript has not loaded yet. Chosen by an even stride so the build
+// is reproducible.
+const pool = species === 'cat' ? data.cat_names : data.dog_names;
+const stride = Math.floor(pool.length / 6);
+const starters = Array.from({ length: 6 }, (_, i) => pool[i * stride]).map((item) => ({
+  ...item,
+  meaning: meaningIn(item.meaning, lang),
+}));
+
+const commandCount =
+  species === 'cat'
+    ? data.common_cat_commands_or_sounds.length
+    : data.common_dog_commands.length;
+const commandExamples = (
+  species === 'cat'
+    ? data.common_cat_commands_or_sounds.slice(0, 4)
+    : data.common_dog_commands.slice(0, 5)
+).join(', ');
+
+const avoidHtml = fill(g.avoidHtml, lang, {
+  commandCount,
+  commandKind: species === 'cat' ? g.commandKindCat : g.commandKindDog,
+  commandExamples,
+});
+
+const speciesWord =
+  species === 'dog' ? g.speciesWordDog : species === 'cat' ? g.speciesWordCat : g.speciesWordAny;
+const ctaHint = fill(g.ctaHint, lang, { species: speciesWord });
+
+const genderLabel = (gender: string) =>
+  gender === 'neutral' ? g.unisex : gender === 'male' ? g.male : g.female;
+
+/**
+ * Strings the client controller renders after load. Serialised into the page
+ * rather than bundled, so the generator chunk stays identical across all
+ * eight languages and only this small blob differs.
+ */
+const runtimeStrings = {
+  ...t.runtime,
+  unisex: g.unisex,
+  male: g.male,
+  female: g.female,
+  meaningLabel: g.meaningLabel,
+  styles: t.styles,
+  copyBatch: g.copyBatch,
+};
+
+---
+
+<section
+  data-png-root
+  data-species={species}
+  data-png-lang={lang}
+  data-png-i18n={JSON.stringify(runtimeStrings)}
+  class="scroll-mt-8"
+  id="generator"
+  aria-labelledby="generator-heading"
+>
+
+  <div class="card p-5 sm:p-7">
+    <h2 id="generator-heading" class="text-2xl sm:text-3xl">{heading}</h2>
+    {intro && <p class="hint mt-2 max-w-2xl">{intro}</p>}
+
+    <form data-png-form class="mt-6 space-y-6" novalidate>
+      {
+        species === 'any' && (
+          <fieldset>
+            <legend class="label">{g.speciesLegend}</legend>
+            <div class="flex flex-wrap gap-2">
+              {[
+                ['any', g.speciesAny],
+                ['dog', g.speciesDog],
+                ['cat', g.speciesCat],
+              ].map(([value, label], i) => (
+                <label class="chip">
+                  <input type="radio" name="species" value={value} checked={i === 0} />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )
+      }
+
+      <fieldset>
+        <legend class="label">{g.genderLegend}</legend>
+        <div class="flex flex-wrap gap-2">
+          {
+            [
+              ['any', g.genderAny],
+              ['male', g.genderMale],
+              ['female', g.genderFemale],
+            ].map(([value, label], i) => (
+              <label class="chip">
+                <input type="radio" name="gender" value={value} checked={i === 0} />
+                {label}
+              </label>
+            ))
+          }
+        </div>
+        <p class="hint mt-1.5">{g.genderHint}</p>
+      </fieldset>
+
+      <fieldset>
+        <legend class="label">
+          {g.styleLegend} <span class="normal-case">{g.stylePickAny}</span>
+        </legend>
+        <div class="flex flex-wrap gap-2">
+          {
+            STYLE_ORDER.map((value) => (
+              <label class="chip">
+                <input type="checkbox" name="style" value={value} />
+                {t.styles[value]}
+              </label>
+            ))
+          }
+        </div>
+        <p class="hint mt-1.5">{g.styleHint}</p>
+      </fieldset>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="label" for="png-letter">{g.letterLabel}</label>
+          <select class="field" id="png-letter" name="letter">
+            <option value="">{g.letterAny}</option>
+            {LETTERS.map((letter) => <option value={letter}>{letter}</option>)}
+          </select>
+        </div>
+
+        <div>
+          <label class="label" for="png-maxlen">{g.maxLenLabel}</label>
+          <select class="field" id="png-maxlen" name="maxlen">
+            <option value="">{g.maxLenAny}</option>
+            {
+              MAX_LENGTHS.map((n) => (
+                <option value={String(n)}>{fill(g.maxLenOption, lang, { n })}</option>
+              ))
+            }
+          </select>
+          <p class="hint mt-1.5">{g.maxLenHint}</p>
+        </div>
+      </div>
+
+      <div class="rounded-xl p-4" style="background: var(--c-raised);">
+        <label class="label" for="png-avoid">{g.avoidLabel}</label>
+        <input
+          class="field"
+          id="png-avoid"
+          name="avoid"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder={g.avoidPlaceholder}
+        />
+        <p class="hint mt-2" set:html={avoidHtml} />
+      </div>
+
+      <fieldset>
+        <legend class="label">{g.optionsLegend}</legend>
+        <div class="space-y-2.5">
+          <label class="flex items-start gap-2.5 text-sm">
+            <input
+              type="checkbox"
+              data-png-exclude-shown
+              name="excludeshown"
+              class="mt-0.5"
+              style="accent-color: var(--c-accent);"
+              checked
+            />
+            <span>
+              {g.excludeShown}
+              <span class="hint block">{g.excludeShownHint}</span>
+            </span>
+          </label>
+
+          <label class="flex items-start gap-2.5 text-sm">
+            <input
+              type="checkbox"
+              data-png-hide-flagged
+              name="hideflagged"
+              class="mt-0.5"
+              style="accent-color: var(--c-accent);"
+            />
+            <span>
+              {g.hideFlagged}
+              <span class="hint block">{g.hideFlaggedHint}</span>
+            </span>
+          </label>
+
+          <label class="flex items-start gap-2.5 text-sm">
+            <input
+              type="checkbox"
+              data-png-pair
+              name="pairmode"
+              class="mt-0.5"
+              style="accent-color: var(--c-accent);"
+            />
+            <span>
+              {g.pairMode}
+              <span class="hint block">{g.pairModeHint}</span>
+            </span>
+          </label>
+
+          <div data-png-pair-options hidden class="pl-7">
+            <label class="label" for="png-setsize">{g.setSizeLabel}</label>
+            <select class="field max-w-52" id="png-setsize" name="setsize">
+              <option value="2">{g.setSize2}</option>
+              <option value="3">{g.setSize3}</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <div
+        class="flex flex-wrap items-center gap-3 border-t pt-5"
+        style="border-color: var(--c-border);"
+      >
+        <button class="btn btn-primary" type="submit">{g.generate}</button>
+        <button class="btn btn-secondary" type="button" data-png-copy>{g.copyBatch}</button>
+        <button class="btn btn-secondary" type="button" data-png-reset-shown>{g.startOver}</button>
+        <p class="hint w-full">{ctaHint}</p>
+      </div>
+    </form>
+  </div>
+
+  <div class="mt-8">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+      <h2 class="text-xl">{g.resultsHeading}</h2>
+      <p class="hint" data-png-status role="status" aria-live="polite" set:html={g.statusInitialHtml} />
+    </div>
+
+    <noscript>
+      <p class="hint mt-3">{g.noscript}</p>
+    </noscript>
+
+    <ul
+      data-png-results
+      class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      aria-label={g.resultsAria}
+    >
+      {
+        starters.map((item) => (
+          <li class="card flex flex-col p-5">
+            <h3 class="text-2xl leading-tight">{item.name}</h3>
+            <p class="hint mt-1">
+              {genderLabel(item.gender)} ·{' '}
+              {item.styles.map((s) => t.styles[s as keyof typeof t.styles] ?? s).join(' · ')}
+            </p>
+            <p class="mt-3 grow text-[0.9375rem]">
+              <span class="font-semibold">{g.meaningLabel}</span> {item.meaning}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/generator-entry';
+</script>

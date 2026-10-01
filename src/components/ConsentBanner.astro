@@ -1,0 +1,203 @@
+---
+/**
+ * Cookie consent, for the analytics already on the site and the advertising it
+ * is funded by.
+ *
+ * The enforcement is not here - it is the Consent Mode v2 defaults set in
+ * BaseLayout's head, which deny ad and analytics storage for the EEA, the UK
+ * and Switzerland by region and let Google resolve the region server-side from
+ * the IP. That is the part that has to be right. This banner is the UI that
+ * lets a visitor change the answer, plus the localStorage flag that remembers
+ * it, and it is deliberately the only piece that guesses at geography.
+ *
+ * Guessing is done from the browser's time zone, which is wrong at the edges:
+ * a VPN or a traveller's laptop can hide the banner from someone who is in
+ * scope. That failure is the safe one - the region defaults still deny their
+ * storage, they just have to use the footer's "Cookie settings" link to grant
+ * it. The reverse error only shows a banner to someone who did not need one.
+ *
+ * If Google's certified CMP is switched on in the AdSense UI later, this
+ * banner should come out: two consent dialogues on one page is worse than
+ * either alone. Removing <ConsentBanner /> from BaseLayout is the whole job -
+ * the CMP sets the same Consent Mode signals this writes.
+ */
+import { DEFAULT_LOCALE, type Lang } from '../i18n/config';
+import { useTranslations, formatter } from '../i18n';
+
+export interface Props {
+  lang?: Lang;
+}
+
+const { lang = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(lang);
+const f = formatter(lang);
+---
+
+<div
+  class="consent"
+  id="png-consent"
+  role="dialog"
+  aria-modal="false"
+  aria-label={t.consent.ariaLabel}
+  aria-live="polite"
+  hidden
+>
+  <div class="consent__inner">
+    <div class="consent__copy">
+      <p class="consent__title">{t.consent.title}</p>
+      <p class="consent__body" set:html={f(t.consent.bodyHtml)} />
+    </div>
+    <div class="consent__actions">
+      {/* Reject is listed first and styled identically: a reject that is
+          harder to find than accept is not a valid choice. */}
+      <button type="button" class="btn btn-secondary" data-consent="denied">
+        {t.consent.reject}
+      </button>
+      <button type="button" class="btn btn-primary" data-consent="granted">
+        {t.consent.accept}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 50;
+    border-top: 1px solid var(--c-border-strong);
+    background: var(--c-surface);
+    /* Sits above the OS gesture bar on phones rather than under it. */
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.12);
+  }
+
+  .consent__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 1rem 1.25rem 1.125rem;
+  }
+
+  .consent__title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  .consent__body {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--c-muted);
+  }
+
+  .consent__body :global(a) {
+    color: var(--c-accent-on-soft);
+    text-decoration: underline;
+  }
+
+  .consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .consent__actions .btn {
+    flex: 1 1 8rem;
+    justify-content: center;
+  }
+
+  @media (min-width: 640px) {
+    .consent__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .consent__actions {
+      flex-shrink: 0;
+    }
+
+    .consent__actions .btn {
+      flex: 0 0 auto;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * The stored answer is a single string, "granted" or "denied", under the
+   * same key the head script reads before gtag is configured. Anything else in
+   * there (an older value, a corrupted one) counts as no answer.
+   */
+  const KEY = 'png-consent';
+  const banner = document.getElementById('png-consent');
+
+  /** Time zones that sit inside the EEA, the UK or Switzerland. */
+  const IN_SCOPE =
+    /^(Europe\/|Atlantic\/(Azores|Madeira|Canary|Faroe|Reykjavik)|Africa\/Ceuta|America\/(Guadeloupe|Martinique|Cayenne|Miquelon)|Indian\/(Reunion|Mayotte))/;
+
+  function stored() {
+    try {
+      const value = localStorage.getItem(KEY);
+      return value === 'granted' || value === 'denied' ? value : null;
+    } catch {
+      return null; // private mode - ask again next time rather than assume
+    }
+  }
+
+  function needsAsking() {
+    if (stored()) return false;
+    try {
+      return IN_SCOPE.test(Intl.DateTimeFormat().resolvedOptions().timeZone ?? '');
+    } catch {
+      return true; // no time zone to read: ask, which is the cautious answer
+    }
+  }
+
+  function open() {
+    banner?.removeAttribute('hidden');
+  }
+
+  function answer(value: 'granted' | 'denied') {
+    try {
+      localStorage.setItem(KEY, value);
+    } catch {
+      /* the choice still applies to this page view */
+    }
+    // gtag() is defined by the inline stub in <head>, which queues the call
+    // whether or not gtag.js has been fetched yet.
+    (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.(
+      'consent',
+      'update',
+      {
+        ad_storage: value,
+        ad_user_data: value,
+        ad_personalization: value,
+        analytics_storage: value,
+      }
+    );
+    banner?.setAttribute('hidden', '');
+  }
+
+  banner?.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((button) => {
+    button.addEventListener('click', () => {
+      answer(button.dataset.consent === 'granted' ? 'granted' : 'denied');
+    });
+  });
+
+  /* The footer link is the way back in for anyone the time-zone guess missed,
+     and the only way to change an answer already given. It is hidden without
+     JavaScript, where it could not do anything. */
+  const reopen = document.querySelector<HTMLButtonElement>('[data-consent-open]');
+  reopen?.removeAttribute('hidden');
+  reopen?.addEventListener('click', open);
+
+  if (needsAsking()) open();
+</script>

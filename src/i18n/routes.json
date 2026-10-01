@@ -1,0 +1,145 @@
+{
+  "defaultLocale": "en",
+  "locales": [
+    {
+      "code": "en",
+      "htmlLang": "en",
+      "ogLocale": "en_US",
+      "label": "English",
+      "dir": "ltr"
+    },
+    {
+      "code": "es",
+      "htmlLang": "es",
+      "ogLocale": "es_ES",
+      "label": "Español",
+      "dir": "ltr"
+    },
+    {
+      "code": "fr",
+      "htmlLang": "fr",
+      "ogLocale": "fr_FR",
+      "label": "Français",
+      "dir": "ltr"
+    },
+    {
+      "code": "de",
+      "htmlLang": "de",
+      "ogLocale": "de_DE",
+      "label": "Deutsch",
+      "dir": "ltr"
+    },
+    {
+      "code": "pt",
+      "htmlLang": "pt",
+      "ogLocale": "pt_BR",
+      "label": "Português",
+      "dir": "ltr"
+    },
+    {
+      "code": "it",
+      "htmlLang": "it",
+      "ogLocale": "it_IT",
+      "label": "Italiano",
+      "dir": "ltr"
+    }
+  ],
+  "routes": {
+    "home": {
+      "en": "",
+      "es": "",
+      "fr": "",
+      "de": "",
+      "pt": "",
+      "it": ""
+    },
+    "dog": {
+      "en": "dog-names",
+      "es": "nombres-de-perros",
+      "fr": "noms-de-chiens",
+      "de": "hundenamen",
+      "pt": "nomes-de-cachorro",
+      "it": "nomi-per-cani"
+    },
+    "cat": {
+      "en": "cat-names",
+      "es": "nombres-de-gatos",
+      "fr": "noms-de-chats",
+      "de": "katzennamen",
+      "pt": "nomes-de-gato",
+      "it": "nomi-per-gatti"
+    },
+    "pet": {
+      "en": "pet-names",
+      "es": "nombres-de-mascotas",
+      "fr": "noms-d-animaux",
+      "de": "haustiernamen",
+      "pt": "nomes-de-animais",
+      "it": "nomi-per-animali"
+    },
+    "teach": {
+      "en": "teach-a-pet-its-name",
+      "es": "ensenar-el-nombre-a-tu-mascota",
+      "fr": "apprendre-son-nom-a-un-animal",
+      "de": "haustier-namen-beibringen",
+      "pt": "ensinar-o-nome-ao-seu-pet",
+      "it": "insegnare-il-nome-al-tuo-animale"
+    },
+    "avoid": {
+      "en": "pet-names-to-avoid",
+      "es": "nombres-de-mascotas-que-evitar",
+      "fr": "noms-d-animaux-a-eviter",
+      "de": "haustiernamen-vermeiden",
+      "pt": "nomes-de-pets-a-evitar",
+      "it": "nomi-per-animali-da-evitare"
+    },
+    "pairs": {
+      "en": "naming-two-pets",
+      "es": "nombres-para-dos-mascotas",
+      "fr": "nommer-deux-animaux",
+      "de": "zwei-haustiere-benennen",
+      "pt": "nomes-para-dois-pets",
+      "it": "nomi-per-due-animali"
+    },
+    "meanings": {
+      "en": "name-meanings",
+      "es": "significado-de-los-nombres",
+      "fr": "signification-des-noms",
+      "de": "namensbedeutungen",
+      "pt": "significado-dos-nomes",
+      "it": "significato-dei-nomi"
+    },
+    "about": {
+      "en": "about",
+      "es": "sobre-nosotros",
+      "fr": "a-propos",
+      "de": "ueber-uns",
+      "pt": "sobre",
+      "it": "chi-siamo"
+    },
+    "contact": {
+      "en": "contact",
+      "es": "contacto",
+      "fr": "contact",
+      "de": "kontakt",
+      "pt": "contato",
+      "it": "contatti"
+    },
+    "privacy": {
+      "en": "privacy-policy",
+      "es": "politica-de-privacidad",
+      "fr": "politique-de-confidentialite",
+      "de": "datenschutz",
+      "pt": "politica-de-privacidade",
+      "it": "privacy"
+    },
+    "terms": {
+      "en": "terms",
+      "es": "terminos-y-condiciones",
+      "fr": "conditions-generales",
+      "de": "agb",
+      "pt": "termos",
+      "it": "termini"
+    }
+  }
+}

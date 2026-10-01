@@ -1,0 +1,50 @@
+---
+/**
+ * Faint watermark line-mark for the right-hand gutter beside a narrow prose
+ * column. Purely decorative (aria-hidden); only shown once there is enough
+ * room (xl+) for it to sit clear of the text without crowding it.
+ *
+ * Positions itself absolutely, so the parent needs `position: relative` and
+ * enough width beyond the prose column's max-width for the gutter to exist -
+ * pair it with a wrapping <section class="relative"> around the prose block.
+ */
+import PetMark from './PetMark.astro';
+
+export interface Props {
+  pet: 'dog' | 'cat' | 'both';
+}
+
+const { pet } = Astro.props;
+---
+
+<div class="section-mark" aria-hidden="true">
+  {
+    pet === 'both' ? (
+      <>
+        <PetMark pet="dog" size={200} style="color: var(--c-dog);" />
+        <PetMark pet="cat" size={200} style="color: var(--c-cat); margin-left: -2.5rem;" />
+      </>
+    ) : (
+      <PetMark pet={pet} size={260} style={`color: var(--c-${pet});`} />
+    )
+  }
+</div>
+
+<style>
+  .section-mark {
+    display: none;
+  }
+
+  @media (min-width: 80rem) {
+    .section-mark {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      top: 50%;
+      right: 0.5rem;
+      transform: translateY(-50%);
+      opacity: 0.07;
+      pointer-events: none;
+    }
+  }
+</style>

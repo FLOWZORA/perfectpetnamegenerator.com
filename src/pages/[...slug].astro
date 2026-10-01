@@ -1,0 +1,71 @@
+---
+/**
+ * Every content page in every language.
+ *
+ * One catch-all instead of eight route folders, because the slugs are
+ * translated: /dog-names/ and /es/nombres-de-perros/ are the same page. Both
+ * the URL and the view are derived from (locale, routeKey) pairs taken from
+ * routes.json, so a slug can never exist without a page behind it, and the
+ * hreflang set BaseLayout emits can never point at a URL that was not built.
+ *
+ * The four guides share a single view: same shape, different dictionary entry.
+ *
+ * 404 and 500 stay outside this file: they are English-only and noindex.
+ */
+import { LANGS, ROUTE_KEYS, pathFor, type Lang, type RouteKey } from '../i18n/config';
+import { isGuideKey, type GuideKey } from '../lib/guides';
+
+import Home from '../views/Home.astro';
+import Dog from '../views/Dog.astro';
+import Cat from '../views/Cat.astro';
+import Pet from '../views/Pet.astro';
+import Guide from '../views/Guide.astro';
+import About from '../views/About.astro';
+import Contact from '../views/Contact.astro';
+import Privacy from '../views/Privacy.astro';
+import Terms from '../views/Terms.astro';
+
+/**
+ * The guides are deliberately absent here. Guide.astro needs a routeKey and
+ * the other views do not, so folding all twelve into one lookup gives a
+ * component union no single set of props satisfies. The guides are dispatched
+ * separately below instead.
+ */
+const VIEWS = {
+  home: Home,
+  dog: Dog,
+  cat: Cat,
+  pet: Pet,
+  about: About,
+  contact: Contact,
+  privacy: Privacy,
+  terms: Terms,
+} as const;
+
+export function getStaticPaths() {
+  return LANGS.flatMap((lang) =>
+    ROUTE_KEYS.map((key) => {
+      // pathFor gives "/es/contacto/"; a rest param wants "es/contacto", and
+      // the English homepage wants undefined so it emits "/" rather than "//".
+      const slug = pathFor(lang, key).replace(/^\/|\/$/g, '');
+      return {
+        params: { slug: slug || undefined },
+        props: { lang, routeKey: key },
+      };
+    })
+  );
+}
+
+interface Props {
+  lang: Lang;
+  routeKey: RouteKey;
+}
+
+const { lang, routeKey } = Astro.props;
+
+const guideKey = isGuideKey(routeKey) ? routeKey : null;
+const View = guideKey ? null : VIEWS[routeKey as Exclude<RouteKey, GuideKey>];
+---
+
+{guideKey && <Guide lang={lang} routeKey={guideKey} />}
+{View && <View lang={lang} />}

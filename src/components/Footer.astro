@@ -1,0 +1,80 @@
+---
+import { DEFAULT_LOCALE, pathFor, type Lang, type RouteKey } from '../i18n/config';
+import { useTranslations, fill } from '../i18n';
+
+export interface Props {
+  lang?: Lang;
+}
+
+const { lang = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(lang);
+
+const columns: { heading: string; keys: RouteKey[] }[] = [
+  { heading: t.footer.headings.generators, keys: ['home', 'dog', 'cat', 'pet'] },
+  { heading: t.footer.headings.guides, keys: ['teach', 'avoid', 'pairs', 'meanings'] },
+  { heading: t.footer.headings.site, keys: ['about', 'contact'] },
+  { heading: t.footer.headings.legal, keys: ['privacy', 'terms'] },
+];
+
+const copyright = fill(t.footer.copyright, lang, { year: new Date().getFullYear() });
+---
+
+<footer class="mt-20 border-t" style="border-color: var(--c-border); background: var(--c-surface);">
+  <div class="wrap py-12">
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+      <div>
+        <p class="flex items-center gap-2 font-[family-name:var(--font-display)] text-base font-semibold">
+          <img
+            src="/favicon.svg"
+            alt=""
+            width="24"
+            height="24"
+            style="display: block; width: 1.5rem; height: 1.5rem; flex-shrink: 0; border-radius: 0.375rem;"
+            decoding="async"
+          />
+          {t.common.siteName}
+        </p>
+        <p class="hint mt-2 max-w-xs">{t.footer.blurb}</p>
+      </div>
+
+      {
+        columns.map((column) => (
+          <nav aria-label={column.heading}>
+            <h2 class="label">{column.heading}</h2>
+            <ul class="space-y-1.5">
+              {column.keys.map((key) => (
+                <li>
+                  <a
+                    class="text-sm hover:underline"
+                    style="color: var(--c-text);"
+                    href={pathFor(lang, key)}
+                  >
+                    {t.footer.links[key]}
+                  </a>
+                </li>
+              ))}
+              {/* Reopens the consent dialogue. Rendered hidden and revealed by
+                  ConsentBanner's script, because without JavaScript there is
+                  nothing for it to open. */}
+              {column.keys.includes('privacy') && (
+                <li>
+                  <button
+                    type="button"
+                    class="text-sm hover:underline"
+                    style="color: var(--c-text); background: none; border: 0; padding: 0; font: inherit; cursor: pointer;"
+                    data-consent-open
+                    hidden
+                  >
+                    {t.consent.manage}
+                  </button>
+                </li>
+              )}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <p class="hint mt-10 border-t pt-6" style="border-color: var(--c-border);">{copyright}</p>
+  </div>
+</footer>

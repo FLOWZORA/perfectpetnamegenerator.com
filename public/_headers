@@ -1,0 +1,34 @@
+# Cloudflare Pages headers.
+# Hashed build assets and the self-hosted font never change under the same URL.
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/og/*
+  Cache-Control: public, max-age=604800
+
+# Decorative hero animations. Stable filenames, changed only by a manual
+# `npm run media` re-export, so a week of caching with revalidation is safe.
+/media/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Name payloads are regenerated on each build under a stable URL.
+/data/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Plain http:// currently serves the site 200 rather than redirecting, so the
+# same pages exist on two protocols. HSTS closes that for every browser that has
+# seen the site once; the first-ever hit still needs Cloudflare's "Always Use
+# HTTPS" (SSL/TLS -> Edge Certificates), which is dashboard-only. No `preload`
+# and no `includeSubDomains`: both are far harder to walk back than a plain
+# max-age, and neither is needed for an apex + www setup.
+
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()

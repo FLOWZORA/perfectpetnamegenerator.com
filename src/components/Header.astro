@@ -1,0 +1,315 @@
+---
+import {
+  DEFAULT_LOCALE,
+  alternatesFor,
+  pathFor,
+  type Lang,
+  type RouteKey,
+} from '../i18n/config';
+import { useTranslations } from '../i18n';
+
+export interface Props {
+  lang?: Lang;
+  /** Absent on 404/500, where the picker falls back to each locale's home. */
+  routeKey?: RouteKey;
+}
+
+const { lang = DEFAULT_LOCALE, routeKey } = Astro.props;
+const t = useTranslations(lang);
+
+const path = Astro.url.pathname;
+const links = (['dog', 'cat', 'pet', 'about'] as const).map((key) => ({
+  href: pathFor(lang, key),
+  label: t.nav[key],
+}));
+
+/**
+ * The picker points at the same route in every language, so switching
+ * language on the cat page lands on the cat page rather than the homepage.
+ * Plain links, no JavaScript and no stored preference: a crawler follows them
+ * and each one is the canonical URL for that language.
+ */
+const languages = alternatesFor(routeKey ?? 'home');
+---
+
+<header class="site-header">
+  <div class="wrap site-header__bar">
+    <div class="site-header__top">
+      <a href={pathFor(lang, 'home')} class="site-header__brand" style="color: var(--c-text);">
+        <img
+          src="/favicon.svg"
+          alt=""
+          width="28"
+          height="28"
+          class="site-logo"
+          decoding="async"
+        />
+        <span>{t.common.siteName}</span>
+      </a>
+
+      <button
+        type="button"
+        data-theme-toggle
+        class="site-header__toggle"
+        style="border-color: var(--c-border-strong); color: var(--c-text);"
+        aria-label={t.common.themeToggle}
+      >
+        <span aria-hidden="true">◐</span>
+      </button>
+    </div>
+
+    <nav class="site-header__nav" aria-label={t.common.mainNav}>
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={path === link.href ? 'page' : undefined}
+                style={
+                  path === link.href
+                    ? 'color: var(--c-accent-on-soft); background: var(--c-accent-soft);'
+                    : 'color: var(--c-muted);'
+                }
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="lang-picker">
+      <label class="sr-only" for="png-lang">{t.common.languageLabel}</label>
+      <select class="lang-select" id="png-lang" data-lang-switch>
+        {
+          languages.map((alt) => (
+            <option value={alt.path} selected={alt.lang === lang}>
+              {alt.locale.label}
+            </option>
+          ))
+        }
+      </select>
+      <noscript>
+        {/* A <select> cannot navigate without JavaScript, so it is hidden
+            and replaced by plain links only in that case. */}
+        <style>.lang-select { display: none; }</style>
+        <ul class="lang-fallback" aria-label={t.common.languageNav}>
+          {
+            languages
+              .filter((alt) => alt.lang !== lang)
+              .map((alt) => (
+                <li>
+                  <a href={alt.path} hreflang={alt.lang} lang={alt.lang}>
+                    {alt.locale.label}
+                  </a>
+                </li>
+              ))
+          }
+        </ul>
+      </noscript>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--c-border);
+    background: var(--c-surface);
+  }
+
+  /*
+   * Mobile-first: the bar is a wrapping flex column of rows. Row one is the
+   * brand plus the theme toggle (a non-wrapping flex pair, so the brand text
+   * shrinks/wraps before the toggle is ever pushed out of view). The nav and
+   * language picker flow onto the rows below.
+   */
+  .site-header__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.625rem 1rem;
+    padding-block: 0.75rem;
+  }
+
+  .site-header__top {
+    display: flex;
+    flex: 1 1 100%;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .site-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    margin-inline-end: auto;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .site-header__brand span {
+    min-width: 0;
+  }
+
+  .site-logo {
+    display: block;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    border-radius: 0.375rem;
+  }
+
+  .site-header__toggle {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    background: transparent;
+    color: var(--c-text);
+    cursor: pointer;
+  }
+
+  .site-header__nav {
+    width: 100%;
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .site-header__nav a {
+    display: block;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .lang-picker {
+    display: flex;
+    align-items: center;
+  }
+
+  .lang-select {
+    appearance: none;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0.5rem;
+    background: var(--c-raised);
+    color: var(--c-text);
+    font: inherit;
+    font-size: 0.875rem;
+    padding: 0.375rem 1.5rem 0.375rem 0.625rem;
+    /* Chevron drawn inline so the control needs no image request. */
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position:
+      right 0.7rem center,
+      right 0.45rem center;
+    background-size:
+      4px 4px,
+      4px 4px;
+    background-repeat: no-repeat;
+  }
+
+  /* The options popup is OS-rendered and often ignores the page's dark
+     palette, showing a light background — force readable text for it. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .lang-select option {
+      color: #000;
+      font-weight: 700;
+    }
+  }
+
+  :root[data-theme="dark"] .lang-select option {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .lang-fallback {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    padding-left: 0.5rem;
+  }
+
+  .lang-fallback a {
+    color: var(--c-accent-on-soft);
+    text-decoration: underline;
+  }
+
+  /*
+   * From 768px up everything sits on a single row:
+   * brand | nav | language picker | theme toggle.
+   * `display: contents` dissolves the mobile brand/toggle wrapper so both
+   * become direct flex children of the bar again; `order` then lays the four
+   * controls out in reading order.
+   */
+  @media (min-width: 768px) {
+    .site-header__bar {
+      flex-wrap: nowrap;
+      gap: 0.5rem 0.75rem;
+    }
+
+    .site-header__top {
+      display: contents;
+    }
+
+    .site-header__brand {
+      order: 0;
+    }
+
+    .site-header__nav {
+      width: auto;
+      order: 1;
+    }
+
+    .site-header__nav ul {
+      flex-wrap: nowrap;
+    }
+
+    .lang-picker {
+      order: 2;
+    }
+
+    .site-header__toggle {
+      order: 3;
+    }
+  }
+</style>
+
+<script>
+  const picker = document.querySelector<HTMLSelectElement>('[data-lang-switch]');
+  picker?.addEventListener('change', () => {
+    if (picker.value) window.location.href = picker.value;
+  });
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  toggle?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = root.dataset.theme ?? (systemDark ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('png-theme', next);
+    } catch {
+      /* private mode - the toggle still works for this page view */
+    }
+  });
+</script>

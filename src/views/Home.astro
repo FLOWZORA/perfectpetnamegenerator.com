@@ -1,0 +1,255 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Generator from '../components/Generator.astro';
+import Faq from '../components/Faq.astro';
+import PetMark from '../components/PetMark.astro';
+import SectionMark from '../components/SectionMark.astro';
+import { faqSchema, organizationSchema, websiteSchema } from '../lib/schema';
+import { faqItems } from '../lib/content';
+import { contentVars } from '../lib/counts';
+import { pathFor, type Lang } from '../i18n/config';
+import { GUIDE_KEYS } from '../lib/guides';
+import { useTranslations, formatter } from '../i18n';
+
+export interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const vars = contentVars(lang);
+const f = formatter(lang, vars);
+const home = t.home;
+
+const faqs = faqItems(home.faqs, lang, vars);
+---
+
+<BaseLayout
+  title={home.title}
+  description={home.description}
+  routeKey="home"
+  lang={lang}
+  keywords="pet name generator, dog name generator, cat name generator, random pet name generator, random dog name generator, random cat name generator, pet names with meanings"
+  jsonLd={[faqSchema(faqs, lang), websiteSchema(lang), organizationSchema()]}
+>
+  <div class="wrap py-10 sm:py-14">
+    <div class="hero-grid">
+      <div class="hero-title max-w-3xl">
+        <p class="label" style="letter-spacing: 0.08em;">{f(home.eyebrow)}</p>
+        <h1 class="mt-2 text-4xl sm:text-5xl">{home.h1}</h1>
+      </div>
+
+      {/*
+        Self-hosted, converted from the source GIFs to animated WebP
+        (scripts/media-src/ + scripts/build-media.mjs). Same-origin and
+        ~25% smaller than the GIFs, so no third-party connection on the
+        critical path. Attribution links kept per animatedimages.org's terms.
+      */}
+      <div class="pet-gifs">
+        <a href="https://www.animatedimages.org/cat-dogs-202.htm">
+          <img
+            src="/media/dog-hero.webp"
+            width="181"
+            height="150"
+            decoding="async"
+            fetchpriority="low"
+            alt="Cartoon dog wagging its tail"
+          />
+        </a>
+        <a href="https://www.animatedimages.org/cat-cats-209.htm">
+          <img
+            src="/media/cat-hero.webp"
+            width="221"
+            height="154"
+            decoding="async"
+            fetchpriority="low"
+            alt="Cartoon cat playing"
+          />
+        </a>
+      </div>
+
+      <div class="hero-body max-w-3xl">
+        <p class="answer-box mt-6">{home.answerBox}</p>
+        <p class="hint mt-4" set:html={f(home.leadHtml)} />
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <Generator species="any" section="home" lang={lang} />
+    </div>
+
+    <section class="mt-16" aria-labelledby="styles-heading">
+      <h2 id="styles-heading" class="text-2xl sm:text-3xl">{home.styles.heading}</h2>
+      <p class="hint mt-3 max-w-3xl">{f(home.styles.lead)}</p>
+      <div class="mt-6 grid gap-5 md:grid-cols-2">
+        <article class="card p-6">
+          <h3 class="text-xl">{home.styles.fantasy.heading}</h3>
+          <Fragment set:html={f(home.styles.fantasy.html)} />
+        </article>
+        <article class="card p-6">
+          <h3 class="text-xl">{home.styles.funny.heading}</h3>
+          <Fragment set:html={f(home.styles.funny.html)} />
+        </article>
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="different-heading">
+      <h2 id="different-heading" class="text-2xl sm:text-3xl">{home.different.heading}</h2>
+      <div class="mt-6 grid gap-5 md:grid-cols-3">
+        {
+          home.different.cards.map((card) => (
+            <article class="card p-6">
+              <h3 class="text-xl">{card.heading}</h3>
+              <p class="mt-2 text-[0.9375rem]">{card.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="pick-heading">
+      <h2 id="pick-heading" class="text-2xl sm:text-3xl">{home.pick.heading}</h2>
+      <div class="mt-6 grid gap-5 sm:grid-cols-3">
+        <a
+          class="card p-6 transition-colors hover:border-[var(--c-accent)]"
+          href={pathFor(lang, 'dog')}
+        >
+          <PetMark pet="dog" class="pet-mark" style="color: var(--c-dog);" />
+          <h3 class="mt-3 text-xl" style="color: var(--c-dog);">{home.pick.dog.heading}</h3>
+          <p class="mt-2 text-[0.9375rem]">{f(home.pick.dog.body)}</p>
+        </a>
+        <a
+          class="card p-6 transition-colors hover:border-[var(--c-accent)]"
+          href={pathFor(lang, 'cat')}
+        >
+          <PetMark pet="cat" class="pet-mark" style="color: var(--c-cat);" />
+          <h3 class="mt-3 text-xl" style="color: var(--c-cat);">{home.pick.cat.heading}</h3>
+          <p class="mt-2 text-[0.9375rem]">{f(home.pick.cat.body)}</p>
+        </a>
+        <a
+          class="card p-6 transition-colors hover:border-[var(--c-accent)]"
+          href={pathFor(lang, 'pet')}
+        >
+          <span class="flex items-end gap-2">
+            <PetMark pet="dog" size={44} class="pet-mark" style="color: var(--c-dog);" />
+            <PetMark pet="cat" size={44} class="pet-mark" style="color: var(--c-cat);" />
+          </span>
+          <h3 class="mt-3 text-xl">{home.pick.pet.heading}</h3>
+          <p class="mt-2 text-[0.9375rem]">{f(home.pick.pet.body)}</p>
+        </a>
+      </div>
+    </section>
+
+    {/* The four written guides. This block is the only in-body link to them;
+        everything else reaches them through the footer. */}
+    <section class="mt-16" aria-labelledby="guides-heading">
+      <h2 id="guides-heading" class="text-2xl sm:text-3xl">{t.guides.homeHeading}</h2>
+      <p class="mt-3 max-w-3xl">{f(t.guides.homeLead)}</p>
+      <div class="mt-6 grid gap-5 sm:grid-cols-2">
+        {
+          GUIDE_KEYS.map((key) => (
+            <a
+              class="card p-6 transition-colors hover:border-[var(--c-accent)]"
+              href={pathFor(lang, key)}
+            >
+              <h3 class="text-xl">{t[key].card.heading}</h3>
+              <p class="mt-2 text-[0.9375rem]">{f(t[key].card.body)}</p>
+              <p class="label mt-3" style="color: var(--c-accent-on-soft);">
+                {t.guides.readMore}
+                <span aria-hidden="true"> →</span>
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="relative mt-16" aria-labelledby="how-heading">
+      <SectionMark pet="both" />
+      <div class="prose-page max-w-3xl">
+        <h2 id="how-heading">{home.how.heading}</h2>
+        <Fragment set:html={f(home.how.html)} />
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="about-heading">
+      <div class="prose-page max-w-3xl">
+        <h2 id="about-heading">{home.about.heading}</h2>
+        {home.about.paragraphs.map((para) => <p>{f(para)}</p>)}
+      </div>
+    </section>
+
+    <Faq items={faqs} heading={home.faqHeading} />
+  </div>
+</BaseLayout>
+
+<style>
+  /* Hero: the eyebrow + H1 sit in one row with the animated dog + cat GIFs
+     tucked into the whitespace beside the title; the answer box and lead run
+     full width underneath. On narrow screens the GIFs stack vertically in that
+     side column and shrink to fit it; at lg they move to a roomier column that
+     spans the whole intro and centres vertically. */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr clamp(64px, 24vw, 104px);
+    column-gap: clamp(0.6rem, 3vw, 1rem);
+    grid-template-areas:
+      "title gifs"
+      "body  body";
+    align-items: start;
+  }
+
+  .hero-title { grid-area: title; }
+  .hero-body { grid-area: body; }
+
+  .pet-gifs {
+    grid-area: gifs;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    background: var(--c-raised);
+    border: 1px solid var(--c-border);
+    border-radius: 0.75rem;
+  }
+
+  .pet-gifs a {
+    display: block;
+    line-height: 0;
+  }
+
+  .pet-gifs img {
+    width: 100%;
+    height: auto;
+    max-width: none;
+  }
+
+  @media (min-width: 64rem) {
+    .hero-grid {
+      grid-template-columns: 1fr auto;
+      column-gap: 3rem;
+      grid-template-areas:
+        "title gifs"
+        "body  gifs";
+      align-items: center;
+    }
+
+    .pet-gifs {
+      align-self: center;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(0.5rem, 3vw, 1rem);
+      padding: clamp(1rem, 4vw, 1.75rem);
+      border-radius: 1rem;
+      max-width: 24rem;
+    }
+
+    .pet-gifs img {
+      width: auto;
+      height: clamp(84px, 20vw, 116px);
+    }
+  }
+</style>

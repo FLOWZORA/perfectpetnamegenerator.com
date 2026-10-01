@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Generator from '../components/Generator.astro';
+import Faq from '../components/Faq.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import HeroArt from '../components/HeroArt.astro';
+import SectionMark from '../components/SectionMark.astro';
+import { faqSchema, breadcrumbSchema } from '../lib/schema';
+import { faqItems } from '../lib/content';
+import { contentVars } from '../lib/counts';
+import data from '../data/pet-name-data.json';
+import type { Lang } from '../i18n/config';
+import { useTranslations, formatter } from '../i18n';
+import { meaningIn } from '../lib/meanings';
+
+export interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const vars = contentVars(lang);
+const f = formatter(lang, vars);
+const dog = t.dog;
+
+const byStyle = (style: string, count: number) =>
+  data.dog_names
+    .filter((n) => n.styles.includes(style))
+    .slice(0, count)
+    .map((n) => ({ ...n, meaning: meaningIn(n.meaning, lang) }));
+
+/* Names stay in the source language - they are proper nouns. Their meanings are
+   translated (meaningIn falls back to English where a translation is missing). */
+const showcase = [
+  { label: dog.showcase.strong, names: byStyle('strong', 6) },
+  { label: dog.showcase.cute, names: byStyle('cute', 6) },
+  { label: dog.showcase.mythical, names: byStyle('mythical', 6) },
+];
+
+const faqs = faqItems(dog.faqs, lang, vars);
+---
+
+<BaseLayout
+  title={dog.title}
+  description={dog.description}
+  routeKey="dog"
+  lang={lang}
+  keywords="dog name generator, random dog name generator, dog name generator male, dog name generator female, registered dog name generator, male dog names, female dog names"
+  jsonLd={[
+    faqSchema(faqs, lang),
+    breadcrumbSchema(
+      [
+        { name: t.common.home, key: 'home' },
+        { name: dog.breadcrumb, key: 'dog' },
+      ],
+      lang
+    ),
+  ]}
+>
+  <div class="wrap py-10 sm:py-14">
+    <Breadcrumb lang={lang} current={dog.breadcrumb} />
+
+    <div class="mt-4 lg:grid lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-5xl" style="color: var(--c-dog);">{dog.h1}</h1>
+        <p class="answer-box mt-6">{f(dog.answerBox)}</p>
+      </div>
+      <HeroArt pet="dog" class="mt-8 lg:mt-0" />
+    </div>
+
+    <div class="mt-10">
+      <Generator species="dog" section="dog" lang={lang} />
+    </div>
+
+    <section class="relative mt-16" aria-labelledby="conflict-heading">
+      <SectionMark pet="dog" />
+      <div class="prose-page max-w-3xl">
+        <h2 id="conflict-heading">{dog.prose.heading}</h2>
+        <Fragment set:html={f(dog.prose.html)} />
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="showcase-heading">
+      <h2 id="showcase-heading" class="text-2xl sm:text-3xl">{dog.showcase.heading}</h2>
+      <p class="hint mt-2 max-w-2xl">{dog.showcase.lead}</p>
+      <div class="mt-6 grid gap-5 md:grid-cols-3">
+        {
+          showcase.map((group) => (
+            <article class="card p-6">
+              <h3 class="text-xl">{group.label}</h3>
+              <ul class="mt-3 space-y-2.5 text-[0.9375rem]">
+                {group.names.map((item) => (
+                  <li>
+                    <strong>{item.name}</strong>
+                    <span class="hint block">{item.meaning}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="relative mt-16" aria-labelledby="more-heading">
+      <SectionMark pet="dog" />
+      <div class="prose-page max-w-3xl">
+        <h2 id="more-heading">{dog.more.heading}</h2>
+        <Fragment set:html={f(dog.more.html)} />
+      </div>
+    </section>
+
+    <Faq items={faqs} heading={dog.faqHeading} />
+  </div>
+</BaseLayout>

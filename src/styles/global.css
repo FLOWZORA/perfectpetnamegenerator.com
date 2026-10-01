@@ -1,0 +1,307 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Self-hosted display font (latin subset). Preloaded in BaseLayout.
+   font-display: swap so text paints immediately in the fallback face.
+   --------------------------------------------------------------- */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/fraunces-latin-var.woff2") format("woff2");
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------------------------------------------------------------
+   Palette.
+   Every foreground/background pair the UI actually uses is checked
+   at >= 4.5:1 in BOTH modes by `npm run contrast`
+   (scripts/check-contrast.mjs parses the two blocks marked below).
+   --------------------------------------------------------------- */
+
+/* @palette light */
+:root {
+  color-scheme: light;
+  --c-bg: #fbf7f1;
+  --c-surface: #ffffff;
+  --c-raised: #f2ebe0;
+  --c-border: #e0d4c2;
+  --c-border-strong: #99856a;
+  --c-text: #1c1714;
+  --c-muted: #5f574e;
+  --c-accent: #9c3a17;
+  --c-accent-hover: #7f2d0f;
+  --c-accent-ink: #ffffff;
+  --c-accent-soft: #fbeade;
+  --c-accent-on-soft: #83300f;
+  --c-dog: #79490a;
+  --c-cat: #0c5a5e;
+  --c-flag: #7c4300;
+  --c-flag-soft: #fbeed3;
+  --c-flag-border: #d3ae66;
+  --c-focus: #1257a8;
+  --shadow-card: 0 1px 2px rgb(28 23 20 / 0.05), 0 8px 24px -12px rgb(28 23 20 / 0.18);
+}
+/* @palette end */
+
+/* @palette dark */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --c-bg: #15110e;
+    --c-surface: #1f1a15;
+    --c-raised: #2b241d;
+    --c-border: #3b322a;
+    --c-border-strong: #77695b;
+    --c-text: #f4ede4;
+    --c-muted: #b6aa9c;
+    --c-accent: #f0906a;
+    --c-accent-hover: #f7ac8d;
+    --c-accent-ink: #1c1714;
+    --c-accent-soft: #38221a;
+    --c-accent-on-soft: #f6b092;
+    --c-dog: #e0b055;
+    --c-cat: #5cc6c6;
+    --c-flag: #e8bd6b;
+    --c-flag-soft: #362a13;
+    --c-flag-border: #6b5629;
+    --c-focus: #7db4f5;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  }
+}
+/* @palette end */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-bg: #15110e;
+  --c-surface: #1f1a15;
+  --c-raised: #2b241d;
+  --c-border: #3b322a;
+  --c-border-strong: #77695b;
+  --c-text: #f4ede4;
+  --c-muted: #b6aa9c;
+  --c-accent: #f0906a;
+  --c-accent-hover: #f7ac8d;
+  --c-accent-ink: #1c1714;
+  --c-accent-soft: #38221a;
+  --c-accent-on-soft: #f6b092;
+  --c-dog: #e0b055;
+  --c-cat: #5cc6c6;
+  --c-flag: #e8bd6b;
+  --c-flag-soft: #362a13;
+  --c-flag-border: #6b5629;
+  --c-focus: #7db4f5;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-raised: var(--c-raised);
+  --color-line: var(--c-border);
+  --color-line-strong: var(--c-border-strong);
+  --color-ink: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-accent-on-soft: var(--c-accent-on-soft);
+  --color-dog: var(--c-dog);
+  --color-cat: var(--c-cat);
+  --color-flag: var(--c-flag);
+  --color-flag-soft: var(--c-flag-soft);
+  --color-flag-border: var(--c-flag-border);
+
+  /* Every locale is Latin-script now that Japanese and Korean are gone, so the
+     CJK fallbacks that used to sit behind Fraunces have been dropped with
+     them. Fraunces still carries a latin-only unicode-range; the generic
+     serif/sans tails cover anything outside it. */
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--c-accent-soft);
+    color: var(--c-accent-on-soft);
+  }
+}
+
+@layer components {
+  .wrap { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: 1.25rem; }
+  .wrap-prose { width: 100%; max-width: 46rem; margin-inline: auto; padding-inline: 1.25rem; }
+
+  .card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Dog and cat line marks on the generator cards. Held back a little so the
+     headings stay the loudest thing in each card, and brought fully up when
+     the card itself is hovered or focused. */
+  .pet-mark {
+    display: block;
+    opacity: 0.85;
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+  .card:hover .pet-mark,
+  .card:focus-visible .pet-mark {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-primary { background: var(--c-accent); color: var(--c-accent-ink); }
+  .btn-primary:hover { background: var(--c-accent-hover); }
+  .btn-secondary {
+    background: var(--c-surface);
+    color: var(--c-text);
+    border-color: var(--c-border-strong);
+  }
+  .btn-secondary:hover { background: var(--c-raised); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--c-accent-on-soft);
+    border-color: var(--c-border);
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8125rem;
+    border-radius: 0.5rem;
+  }
+  .btn-ghost:hover { background: var(--c-accent-soft); }
+  .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+  .field {
+    width: 100%;
+    background: var(--c-surface);
+    color: var(--c-text);
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0.625rem;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.9375rem;
+    font-family: inherit;
+  }
+  .field::placeholder { color: var(--c-muted); opacity: 1; }
+
+  .label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.35rem;
+  }
+  .hint { font-size: 0.8125rem; color: var(--c-muted); }
+
+  /* Style multi-select: real checkboxes, visually chips. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--c-border-strong);
+    background: var(--c-surface);
+    color: var(--c-text);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .chip:hover { background: var(--c-raised); }
+  .chip input { accent-color: var(--c-accent); width: 0.95rem; height: 0.95rem; }
+  .chip:has(input:checked) {
+    background: var(--c-accent-soft);
+    border-color: var(--c-accent);
+    color: var(--c-accent-on-soft);
+  }
+  .chip:has(input:focus-visible) {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+
+  .prose-page { font-size: 1.0125rem; }
+  .prose-page h2 { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  .prose-page h3 { font-size: 1.2rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  .prose-page p { margin-bottom: 1rem; }
+  .prose-page ul, .prose-page ol { margin: 0 0 1rem 1.25rem; }
+  .prose-page li { margin-bottom: 0.4rem; list-style: disc; }
+  .prose-page ol li { list-style: decimal; }
+  .prose-page a { color: var(--c-accent-on-soft); text-decoration: underline; text-underline-offset: 2px; }
+  .prose-page a:hover { color: var(--c-accent); }
+  .prose-page strong { font-weight: 650; }
+
+  .answer-box {
+    background: var(--c-accent-soft);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+    border-radius: 0.75rem;
+    padding: 1rem 1.15rem;
+    color: var(--c-text);
+    font-size: 1.05rem;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--c-surface);
+    color: var(--c-text);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--c-border-strong);
+    border-radius: 0 0 0.5rem 0;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 0; }
+}

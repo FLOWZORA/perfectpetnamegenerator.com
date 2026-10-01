@@ -1,0 +1,19 @@
+---
+import { DEFAULT_LOCALE, pathFor, type Lang } from '../i18n/config';
+import { useTranslations } from '../i18n';
+
+export interface Props {
+  lang?: Lang;
+  /** Label of the current page; it is the trail's last, unlinked entry. */
+  current: string;
+}
+
+const { lang = DEFAULT_LOCALE, current } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<nav aria-label={t.common.breadcrumb} class="hint">
+  <a class="underline" href={pathFor(lang, 'home')}>{t.common.home}</a>
+  <span aria-hidden="true">›</span>
+  {current}
+</nav>

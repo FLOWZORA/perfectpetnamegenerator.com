@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import SectionMark from '../components/SectionMark.astro';
+import { breadcrumbSchema } from '../lib/schema';
+import { contentVars } from '../lib/counts';
+import type { Lang } from '../i18n/config';
+import { useTranslations, formatter } from '../i18n';
+
+export interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const vars = contentVars(lang);
+const f = formatter(lang, vars);
+const page = t.privacy;
+---
+
+<BaseLayout
+  title={page.title}
+  description={page.description}
+  routeKey="privacy"
+  lang={lang}
+  jsonLd={[
+    breadcrumbSchema(
+      [
+        { name: t.common.home, key: 'home' },
+        { name: page.breadcrumb, key: 'privacy' },
+      ],
+      lang
+    ),
+  ]}
+>
+  <div class="wrap py-10 sm:py-14">
+    <div class="relative">
+      <SectionMark pet="both" />
+      <div class="mx-auto max-w-[46rem] xl:mx-0">
+        <Breadcrumb lang={lang} current={page.breadcrumb} />
+
+        <h1 class="mt-4 text-4xl">{page.h1}</h1>
+        <p class="hint mt-2">{f(page.updatedLabel)}</p>
+        <p class="answer-box mt-6">{f(page.answerBox)}</p>
+
+        <div class="prose-page mt-10" set:html={f(page.html)} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

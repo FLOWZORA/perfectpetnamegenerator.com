@@ -1,0 +1,246 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import {
+  DEFAULT_LOCALE,
+  alternatesFor,
+  localeOf,
+  pathFor,
+  type Lang,
+  type RouteKey,
+} from '../i18n/config';
+import { useTranslations } from '../i18n';
+
+export interface Props {
+  title: string;
+  description: string;
+  /** Route identity; the localised path is resolved from it. */
+  routeKey?: RouteKey;
+  /** Escape hatch for pages outside the translated route table (404, 500). */
+  path?: string;
+  lang?: Lang;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** Comma-separated topical keywords for this page. */
+  keywords?: string;
+}
+
+const {
+  title,
+  description,
+  routeKey,
+  path,
+  lang = DEFAULT_LOCALE,
+  ogImage = '/og/default.png',
+  jsonLd = [],
+  noindex = false,
+  keywords,
+} = Astro.props;
+
+const t = useTranslations(lang);
+const locale = localeOf(lang);
+const site = Astro.site ?? new URL('https://perfectpetnamegenerator.com');
+const currentPath = routeKey ? pathFor(lang, routeKey) : (path ?? '/');
+const canonical = new URL(currentPath, site).href;
+const ogImageUrl = new URL(ogImage, site).href;
+
+/**
+ * hreflang: every language's URL for this route, each page listing all of
+ * them including itself, plus x-default pointing at English. Only emitted for
+ * pages that exist in every language — 404 and 500 pass `path` instead of a
+ * route key and get none, which is correct for a noindex page.
+ */
+const alternates = routeKey ? alternatesFor(routeKey) : [];
+const xDefault = routeKey ? new URL(pathFor(DEFAULT_LOCALE, routeKey), site).href : null;
+---
+
+<!doctype html>
+<html lang={locale.htmlLang} dir={locale.dir}>
+  <head>
+    <meta charset="utf-8" />
+
+    <!--
+      Google Analytics (gtag.js), deferred.
+
+      gtag.js is ~90 KB of mostly-unused, partly-legacy script whose execution
+      lands two long tasks on the main thread during load - the whole of this
+      site's measured Total Blocking Time. Nothing here needs it before the
+      visitor interacts, so the real <script> is injected only on the first
+      interaction (pointer, keydown, scroll, touch).
+
+      There is deliberately no idle/timed fallback: requestIdleCallback armed on
+      `load` fires immediately on a page this light, which put gtag straight back
+      onto the load-time critical path (and into Lighthouse's TBT window). A
+      visit with genuinely zero interaction - a bot, or a lab run - sends no hit,
+      which is the intended trade. The dataLayer/gtag stubs below queue the
+      config call so the first real pageview is not lost in the gap.
+    -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      /*
+        Consent Mode v2. Two defaults: a permissive global one, then a denying
+        one scoped to the EEA, the UK and Switzerland, which takes precedence
+        for those regions. The region is resolved by Google from the request
+        IP, so this is the part that actually enforces - ConsentBanner's
+        time-zone check only decides whether to show the dialogue.
+
+        wait_for_update holds the first hit briefly so a visitor who accepts
+        immediately is not measured cookielessly for that page view. Both
+        defaults are set before the config call below, which is the ordering
+        the API requires.
+      */
+      gtag('consent', 'default', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+        analytics_storage: 'granted',
+      });
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+        region: [
+          'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE',
+          'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT',
+          'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH',
+        ],
+      });
+
+      // A previous answer, replayed before the first hit so the visitor is not
+      // asked again and is not measured against the default in the meantime.
+      try {
+        var consent = localStorage.getItem('png-consent');
+        if (consent === 'granted' || consent === 'denied') {
+          gtag('consent', 'update', {
+            ad_storage: consent,
+            ad_user_data: consent,
+            ad_personalization: consent,
+            analytics_storage: consent,
+          });
+        }
+      } catch (e) {}
+
+      gtag('js', new Date());
+      gtag('config', 'G-X83X0HEDCB');
+
+      (function () {
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-X83X0HEDCB';
+          document.head.appendChild(s);
+          cleanup();
+        }
+        var events = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+        function cleanup() {
+          events.forEach(function (e) {
+            window.removeEventListener(e, loadGtag, { passive: true });
+          });
+        }
+        events.forEach(function (e) {
+          window.addEventListener(e, loadGtag, { passive: true });
+        });
+      })();
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
+    <meta name="author" content="Perfect Pet Name Generator" />
+    <link rel="canonical" href={canonical} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, follow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+      )
+    }
+
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.lang} href={new URL(alt.path, site).href} />
+      ))
+    }
+    {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+
+    <link
+      rel="preload"
+      href="/fonts/fraunces-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Perfect Pet Name Generator" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Perfect Pet Name Generator - dog and cat names with real meanings, pronunciation and a command-conflict checker"
+    />
+    <meta property="og:locale" content={locale.ogLocale} />
+    {
+      alternates
+        .filter((alt) => alt.lang !== lang)
+        .map((alt) => <meta property="og:locale:alternate" content={alt.locale.ogLocale} />)
+    }
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Perfect Pet Name Generator" />
+
+    <meta name="theme-color" content="#fbf7f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#15110e" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {
+      jsonLd.map((schema) => (
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+      ))
+    }
+
+    <script is:inline>
+      // Applies a saved theme before first paint so the page never flashes.
+      try {
+        var saved = localStorage.getItem('png-theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.dataset.theme = saved;
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.common.skipLink}</a>
+    <Header lang={lang} routeKey={routeKey} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <ConsentBanner lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,93 @@
+---
+/**
+ * The four written guides, rendered from one view.
+ *
+ * They share a shape exactly - lede, body, FAQ, related links - so four
+ * near-identical view files would only be four places for the markup to drift.
+ * The route key picks the dictionary entry; everything else is the same page.
+ *
+ * Unlike the generator pages these carry Article JSON-LD, and they emit the
+ * Organization node alongside it so the `author`/`publisher` @id references
+ * resolve on the page that makes them rather than dangling.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Faq from '../components/Faq.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import SectionMark from '../components/SectionMark.astro';
+import { articleSchema, breadcrumbSchema, faqSchema, organizationSchema } from '../lib/schema';
+import { faqItems } from '../lib/content';
+import { contentVars } from '../lib/counts';
+import { GUIDE_DATES, type GuideKey } from '../lib/guides';
+import type { Lang } from '../i18n/config';
+import { useTranslations, formatter } from '../i18n';
+
+export interface Props {
+  lang: Lang;
+  routeKey: GuideKey;
+}
+
+const { lang, routeKey } = Astro.props;
+const t = useTranslations(lang);
+const vars = contentVars(lang);
+const f = formatter(lang, vars);
+const page = t[routeKey];
+const dates = GUIDE_DATES[routeKey];
+
+const title = f(page.title);
+const description = f(page.description);
+const faqs = faqItems(page.faqs, lang, vars);
+
+/** Rendered as a visible date and as the Article node's dateModified. */
+const updated = new Date(`${dates.modified}T00:00:00Z`).toLocaleDateString(lang, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  routeKey={routeKey}
+  lang={lang}
+  keywords={page.keywords}
+  jsonLd={[
+    articleSchema({ headline: f(page.h1), description, key: routeKey, dates, lang }),
+    organizationSchema(),
+    faqSchema(faqs, lang),
+    breadcrumbSchema(
+      [
+        { name: t.common.home, key: 'home' },
+        { name: page.breadcrumb, key: routeKey },
+      ],
+      lang
+    ),
+  ]}
+>
+  <div class="wrap py-10 sm:py-14">
+    <div class="relative">
+      <SectionMark pet="both" />
+      <article class="mx-auto max-w-[46rem] xl:mx-0">
+        <Breadcrumb lang={lang} current={page.breadcrumb} />
+
+        <h1 class="mt-4 text-4xl">{f(page.h1)}</h1>
+        <p class="hint mt-2">
+          {f(t.guides.bylineLabel)}
+          <span aria-hidden="true">·</span>
+          <time datetime={dates.modified}>{f(t.guides.updatedLabel, { updated })}</time>
+        </p>
+        <p class="answer-box mt-6">{f(page.answerBox)}</p>
+
+        <div class="prose-page mt-10" set:html={f(page.html)} />
+
+        <Faq items={faqs} heading={page.faqHeading} />
+
+        <section class="prose-page mt-14" aria-labelledby="related-heading">
+          <h2 id="related-heading">{page.related.heading}</h2>
+          <Fragment set:html={f(page.related.html)} />
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>

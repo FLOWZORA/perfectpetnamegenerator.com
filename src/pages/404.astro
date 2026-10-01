@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PetMark from '../components/PetMark.astro';
+---
+
+<BaseLayout
+  title="Page not found | Perfect Pet Name Generator"
+  description="That page does not exist. Head to the dog, cat or general pet name generator instead."
+  path="/404/"
+  noindex
+>
+  <div class="wrap py-16 sm:py-20">
+    <div class="mx-auto max-w-2xl text-center">
+      <span class="flex items-end justify-center gap-3">
+        <PetMark pet="dog" size={64} class="pet-mark" style="color: var(--c-dog);" />
+        <PetMark pet="cat" size={64} class="pet-mark" style="color: var(--c-cat);" />
+      </span>
+
+      <p class="label mt-6" style="letter-spacing: 0.08em;">Error 404</p>
+      <h1 class="mt-2 text-4xl sm:text-5xl">That page has wandered off</h1>
+
+      <p class="mt-4">
+        The address you followed does not match anything on this site. The page may have been
+        renamed, or the link that sent you here may have a typo in it. Nothing is lost — every
+        generator is still exactly where it was, and all of them are free and need no account.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a class="btn btn-primary" href="/">Back to the homepage</a>
+        <a class="btn btn-secondary" href="/dog-names/">Dog names</a>
+        <a class="btn btn-secondary" href="/cat-names/">Cat names</a>
+      </div>
+    </div>
+
+    <div class="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
+      <a class="card p-6 transition-colors hover:border-[var(--c-accent)]" href="/dog-names/">
+        <PetMark pet="dog" class="pet-mark" style="color: var(--c-dog);" />
+        <h2 class="mt-3 text-xl" style="color: var(--c-dog);">Dog Name Generator</h2>
+        <p class="mt-2 text-[0.9375rem]">
+          Dog names with documented meanings, each one checked so it will not clash with sit,
+          stay, come or down.
+        </p>
+      </a>
+      <a class="card p-6 transition-colors hover:border-[var(--c-accent)]" href="/cat-names/">
+        <PetMark pet="cat" class="pet-mark" style="color: var(--c-cat);" />
+        <h2 class="mt-3 text-xl" style="color: var(--c-cat);">Cat Name Generator</h2>
+        <p class="mt-2 text-[0.9375rem]">
+          Cat names tuned for the sounds cats actually respond to, with meanings shown next to
+          every suggestion.
+        </p>
+      </a>
+      <a class="card p-6 transition-colors hover:border-[var(--c-accent)]" href="/pet-names/">
+        <span class="flex items-end gap-2">
+          <PetMark pet="dog" size={44} class="pet-mark" style="color: var(--c-dog);" />
+          <PetMark pet="cat" size={44} class="pet-mark" style="color: var(--c-cat);" />
+        </span>
+        <h2 class="mt-3 text-xl">Names for a multi-pet home</h2>
+        <p class="mt-2 text-[0.9375rem]">
+          Both species at once, plus bonded-pair mode for two animals adopted together.
+        </p>
+      </a>
+    </div>
+  </div>
+</BaseLayout>

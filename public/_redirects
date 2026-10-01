@@ -1,0 +1,14 @@
+# Cloudflare Pages redirects.
+
+# The sitemap lives at /sitemap-index.xml, which is what robots.txt advertises
+# and what crawlers follow. /sitemap.xml is the path people type by hand and
+# submit to Search Console out of habit, so point it at the real one rather
+# than letting it 404.
+/sitemap.xml  /sitemap-index.xml  301
+
+# Japanese and Korean were removed on 2026-09-10. Both used the English slugs
+# for every route, so a splat maps each old URL onto its English equivalent
+# exactly - /ja/dog-names/ to /dog-names/, /ko/ to /. A 301 keeps whatever
+# ranking those URLs had and stops them 404ing for anyone holding a link.
+/ja/*  /:splat  301
+/ko/*  /:splat  301

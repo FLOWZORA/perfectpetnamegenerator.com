@@ -1,0 +1,32 @@
+{
+  "name": "perfectpetnamegenerator",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/build-data.mjs && astro dev",
+    "prebuild": "node scripts/build-data.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "npm run build && wrangler deploy",
+    "check": "astro check",
+    "contrast": "node scripts/check-contrast.mjs",
+    "audit": "node scripts/audit-build.mjs",
+    "i18n": "node scripts/check-i18n.mjs",
+    "verify": "npm run i18n && npm run build && npm run contrast && npm run audit && npm run test:phonetics",
+    "test:phonetics": "node scripts/test-phonetics.mjs",
+    "og": "node scripts/build-og.mjs",
+    "media": "node scripts/build-media.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.13.0",
+    "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.129.0"
+  }
+}
