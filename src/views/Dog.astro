@@ -45,7 +45,7 @@ const faqs = faqItems(dog.faqs, lang, vars);
   description={dog.description}
   routeKey="dog"
   lang={lang}
-  keywords="dog name generator, random dog name generator, dog name generator male, dog name generator female, registered dog name generator, male dog names, female dog names"
+  keywords="pet name generator dog, dog name generator, random pet name generator, pet name generator, pet name, pet name tags, dog pet names, random dog name generator, male dog names, female dog names, registered dog name generator"
   jsonLd={[
     faqSchema(faqs, lang),
     breadcrumbSchema(
@@ -62,6 +62,7 @@ const faqs = faqItems(dog.faqs, lang, vars);
 
     <div class="mt-4 lg:grid lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12">
       <div class="max-w-3xl">
+        <p class="label mb-2" style="color: var(--c-dog); letter-spacing: 0.08em;">Pet Name Generator Dog · Random Canine Pet Names</p>
         <h1 class="text-4xl sm:text-5xl" style="color: var(--c-dog);">{dog.h1}</h1>
         <p class="answer-box mt-6">{f(dog.answerBox)}</p>
       </div>
@@ -99,6 +100,29 @@ const faqs = faqItems(dog.faqs, lang, vars);
             </article>
           ))
         }
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="dog-tags-heading">
+      <div class="prose-page max-w-3xl">
+        <h2 id="dog-tags-heading" class="text-2xl sm:text-3xl">Pet Name Tags for Dogs: Sizing & Engraving Advice</h2>
+        <p class="mt-4 text-[0.9375rem] leading-relaxed">
+          When ordering engraved <strong>pet name tags</strong> for a dog collar, every character counts. A dog tag needs room for your phone number, a backup contact, and ideally an indication that your pet is microchipped. If your dog’s call name is 10 or 12 letters long, the engraver must shrink the font size, making your phone number difficult to read in an emergency.
+        </p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div class="card p-5">
+            <h3 class="text-lg font-semibold" style="color: var(--c-dog);">Collar Tag Character Limits</h3>
+            <p class="mt-2 text-[0.875rem]">
+              Most stainless steel and brass dog tags offer 3 to 4 lines with a maximum of 12 to 14 characters per line. Choosing a dog name under 6 letters (like Max, Luna, Milo, or Daisy) guarantees bold, legible engraving.
+            </p>
+          </div>
+          <div class="card p-5">
+            <h3 class="text-lg font-semibold" style="color: var(--c-dog);">Registered Names vs. Call Names</h3>
+            <p class="mt-2 text-[0.875rem]">
+              Purebred dogs often have long pedigree titles on AKC or Kennel Club documents, but their daily <strong>pet name tags</strong> should feature only their concise, single-word call name.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 

@@ -29,7 +29,7 @@ const faqs = faqItems(home.faqs, lang, vars);
   description={home.description}
   routeKey="home"
   lang={lang}
-  keywords="pet name generator, dog name generator, cat name generator, random pet name generator, random dog name generator, random cat name generator, pet names with meanings"
+  keywords="pet name generator, pet name, random pet name generator, pet name generator dog, pet name generator cat, pet name tags, pet names, dog name generator, cat name generator, pet names with meanings"
   jsonLd={[faqSchema(faqs, lang), websiteSchema(lang), organizationSchema()]}
 >
   <div class="wrap py-10 sm:py-14">
@@ -137,6 +137,47 @@ const faqs = faqItems(home.faqs, lang, vars);
           <h3 class="mt-3 text-xl">{home.pick.pet.heading}</h3>
           <p class="mt-2 text-[0.9375rem]">{f(home.pick.pet.body)}</p>
         </a>
+      </div>
+    </section>
+
+    {/* Dedicated SEO sections for Random Pet Name Generator and Pet Name Tags */}
+    <section class="mt-16" aria-labelledby="random-generator-heading">
+      <div class="prose-page max-w-3xl">
+        <h2 id="random-generator-heading" class="text-2xl sm:text-3xl">Random Pet Name Generator for Dogs and Cats</h2>
+        <p class="mt-4 text-[0.9375rem] leading-relaxed">
+          Finding the right <strong>pet name</strong> should be fun, spontaneous, and frustration-free. Our <strong>random pet name generator</strong> uses an unbiased Fisher-Yates randomization algorithm to draw fresh batches from over {vars.total} curated canine and feline names. Whether you need a high-energy dog call name, a gentle kitten name, or matching names for bonded pairs, each generate delivers new inspiration with real etymological meanings attached.
+        </p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div class="card p-6">
+            <h3 class="text-xl font-semibold" style="color: var(--c-dog);">Pet Name Generator Dog</h3>
+            <p class="mt-2 text-[0.9375rem]">
+              Looking specifically for dog names? Our dedicated <a class="underline" style="color: var(--c-dog);" href={pathFor(lang, 'dog')}>pet name generator dog</a> view screens every suggestion against common commands like sit, stay, heel, and down. This prevents sound overlap so your dog learns recall faster and never confuses its name with a correction.
+            </p>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-xl font-semibold" style="color: var(--c-cat);">Pet Name Generator Cat</h3>
+            <p class="mt-2 text-[0.9375rem]">
+              Naming a new kitten? Switch to the <a class="underline" style="color: var(--c-cat);" href={pathFor(lang, 'cat')}>pet name generator cat</a> mode to discover names rich in high-frequency consonants and crisp vowels (such as “ee” and sharp “k” sounds) that cats distinguish with superior auditory clarity.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="pet-tags-heading">
+      <div class="prose-page max-w-3xl">
+        <h2 id="pet-tags-heading" class="text-2xl sm:text-3xl">Pet Name Tags: Sizing & Character Limits for Engraved Collar Tags</h2>
+        <p class="mt-4 text-[0.9375rem] leading-relaxed">
+          One of the most overlooked details when choosing a pet name is how it will look on your animal’s <strong>pet name tags</strong>. An engraved ID tag is your pet’s first line of protection if they ever slip out of the yard. However, standard collar tags have strictly limited surface area:
+        </p>
+        <ul class="mt-4 space-y-2 text-[0.9375rem]">
+          <li><strong>Small pet name tags (20mm / 0.8"):</strong> Usually allow 3 lines of 10–12 characters. A pet name of 3 to 6 letters ensures the primary phone number remains bold and legible.</li>
+          <li><strong>Standard pet name tags (25mm–30mm / 1.0"–1.2"):</strong> Allow 4 lines of 12–15 characters. Best suited for pet names up to 7 or 8 letters, leaving space for two phone numbers and a city or “Microchipped” line.</li>
+          <li><strong>Large pet name tags (32mm+ / 1.25"+):</strong> Suitable for large dog breeds, accommodating up to 8–10 letters comfortably.</li>
+        </ul>
+        <p class="mt-4 text-[0.9375rem] leading-relaxed">
+          <strong>Why use our Max Name Length filter:</strong> In the generator above, you can restrict suggestions to 4, 5, 6, 7, or 8 characters. Setting this filter ensures every generated pet name will engrave cleanly on custom <strong>pet name tags</strong> without forcing the engraver to shrink critical contact details to an unreadable font size.
+        </p>
       </div>
     </section>
 

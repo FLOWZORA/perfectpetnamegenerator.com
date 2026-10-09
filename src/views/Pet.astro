@@ -29,7 +29,7 @@ const faqs = faqItems(pet.faqs, lang, vars);
   description={pet.description}
   routeKey="pet"
   lang={lang}
-  keywords="pet name generator, pet names with meanings, dog and cat name generator, random pet name generator, names for two pets"
+  keywords="pet name generator, pet name, pet names, random pet name generator, pet name tags, pet name generator dog, pet name generator cat, names for two pets, random pet names with meanings"
   jsonLd={[
     faqSchema(faqs, lang),
     breadcrumbSchema(
@@ -46,6 +46,7 @@ const faqs = faqItems(pet.faqs, lang, vars);
 
     <div class="mt-4 lg:grid lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12">
       <div class="max-w-3xl">
+        <p class="label mb-2" style="color: var(--c-accent-on-soft); letter-spacing: 0.08em;">Random Pet Name Generator · Pet Names with Meanings</p>
         <h1 class="text-4xl sm:text-5xl">{pet.h1}</h1>
         <p class="answer-box mt-6">{f(pet.answerBox)}</p>
       </div>
@@ -61,6 +62,29 @@ const faqs = faqItems(pet.faqs, lang, vars);
       <div class="prose-page max-w-3xl">
         <h2 id="household-heading">{pet.prose.heading}</h2>
         <Fragment set:html={f(pet.prose.html)} />
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="pet-tag-sizing-heading">
+      <div class="prose-page max-w-3xl">
+        <h2 id="pet-tag-sizing-heading" class="text-2xl sm:text-3xl">Pet Name Tags: Sizing & Collar Engraving Guidelines</h2>
+        <p class="mt-4 text-[0.9375rem] leading-relaxed">
+          Choosing an everyday <strong>pet name</strong> involves balancing sound, personality, and collar practicality. High-quality <strong>pet name tags</strong> ensure that any pet wearing a collar can be identified quickly and safely returned home.
+        </p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div class="card p-5">
+            <h3 class="text-lg font-semibold">Keep Names Under 8 Letters</h3>
+            <p class="mt-2 text-[0.875rem]">
+              Whether buying round tags, bone shapes, or slide-on collar plates, keeping the pet name under 8 letters prevents character compression and keeps contact numbers sharply readable.
+            </p>
+          </div>
+          <div class="card p-5">
+            <h3 class="text-lg font-semibold">Use the Length Filter</h3>
+            <p class="mt-2 text-[0.875rem]">
+              Our <strong>random pet name generator</strong> includes a maximum length filter (4 to 8 characters) designed specifically for custom engraved <strong>pet name tags</strong>.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 

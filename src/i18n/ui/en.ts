@@ -196,13 +196,13 @@ const en = {
   },
 
   home: {
-    title: 'Pet Name Generator | Free Dog & Cat Names with Meanings',
+    title: 'Pet Name Generator: Random Pet Names & Pet Name Tags',
     description:
-      'Free pet name generator for dogs and cats. Get random dog and cat names with real meanings, hear them aloud, and skip names that clash with commands.',
+      'Free random pet name generator for dogs and cats. Find unique pet names with meanings, audio pronunciation, cue checks, and sizing for custom pet name tags.',
     eyebrow: 'Free · No sign-up · {{total}} names',
     h1: 'Perfect Pet Name Generator',
     answerBox:
-      'This free pet name generator randomly generates dog and cat names to match the filters you set — style, gender, starting letter and length. Every name it returns shows a documented meaning, speaks aloud on tap, and is checked so it will not clash with your training commands or the names already used at home.',
+      'This free random pet name generator helps you choose the perfect pet name for dogs and cats. Set filters for style, gender, starting letter, or character length for engraved pet name tags. Every pet name returned includes an authentic meaning, speaks aloud on tap, and is checked against training commands and existing household names.',
     leadHtml:
       'Naming a dog? <a class="underline" style="color: var(--c-accent-on-soft);" href="{{url:dog}}">Use the dog name generator</a>. Naming a cat? <a class="underline" style="color: var(--c-accent-on-soft);" href="{{url:cat}}">Use the cat name generator</a>. Or generate across both below.',
     generator: {
@@ -308,17 +308,17 @@ const en = {
   },
 
   dog: {
-    title: 'Dog Name Generator: Male, Female & Random Ideas',
+    title: 'Pet Name Generator Dog: Random Dog Pet Names & Ideas',
     description:
-      'Free random dog name generator with real name meanings. Filter male, female, style, letter and length, and skip names that clash with training commands.',
+      'Free pet name generator dog tool with meanings. Generate random dog pet names, hear audio, check training clashes, and filter sizes for pet name tags.',
     breadcrumb: 'Dog Names',
     h1: 'Dog Name Generator',
     answerBox:
-      'A dog’s name should be one or two syllables and clearly distinct from every command you plan to teach. This random dog name generator draws on {{dogCount}} dog names with documented meanings, speaks each one aloud, and lets you filter by male, female or unisex before removing suggestions that sound like {{dogCommandCount}} common commands — so the name you choose does not compete with the words your dog has to learn.',
+      'A dog’s name should be one or two syllables and clearly distinct from commands. This pet name generator dog tool draws on {{dogCount}} dog names with documented meanings, speaks each aloud, filters male, female or unisex, checks {{dogCommandCount}} common commands, and formats names to fit engraved pet name tags.',
     generator: {
       heading: 'Generate dog names',
       intro:
-        'Filter this random dog name generator by male or female, style, starting letter or tag-friendly length. Add household names to avoid, and the conflict filter handles the rest.',
+        'Use this pet name generator dog tool to find random canine ideas by male, female, style, starting letter, or length for engraved pet name tags. Add household names to avoid, and the conflict filter handles the rest.',
     },
     prose: {
       heading: 'Why a dog’s name must not sound like a command',
@@ -361,17 +361,17 @@ const en = {
   },
 
   cat: {
-    title: 'Cat Name Generator: Male, Female & Random Ideas',
+    title: 'Pet Name Generator Cat: Random Cat Pet Names & Ideas',
     description:
-      'Free random cat name generator with documented meanings and tap-to-hear pronunciation. Filter male, female, style, letter and length, and skip clashes.',
+      'Free pet name generator cat tool with meanings. Discover random cat pet names, listen out loud, avoid cue clashes, and find names sized for pet name tags.',
     breadcrumb: 'Cat Names',
     h1: 'Cat Name Generator',
     answerBox:
-      'A cat’s name should be short, contain a high-frequency sound such as an “ee” or a hard consonant, and stay clearly distinct from the words used to correct or call the cat. This random cat name generator draws on {{catCount}} cat names with documented meanings, reads each one aloud, lets you filter by male or female, and screens out names that clash with household names or the cues cats already hear daily.',
+      'A cat’s name should be short, carry bright high-frequency tones, and avoid correction cues. This pet name generator cat tool draws on {{catCount}} cat names with documented meanings, reads each aloud, and screens out cue clashes while finding names sized perfectly for lightweight cat pet name tags.',
     generator: {
       heading: 'Generate cat names',
       intro:
-        'Filter this random cat name generator by male or female, style, starting letter or tag-friendly length. Add the names already used in your home and the conflict filter keeps clear of them.',
+        'Use this pet name generator cat tool to filter random feline ideas by male, female, style, starting letter, or length for engraved pet name tags. Household conflict checks are applied automatically.',
     },
     prose: {
       heading: 'What makes a cat name work',
@@ -414,17 +414,17 @@ const en = {
   },
 
   pet: {
-    title: 'Pet Names With Meanings for Dogs, Cats and Pairs',
+    title: 'Pet Name Generator: Pet Names With Meanings & Tag Ideas',
     description:
-      'Pet names for a home that already has names in it. Every name shows its meaning, plays out loud, and is checked against your family, pets and training cues.',
+      'Explore pet names with our free random pet name generator. Filter by style, letter, and pet name tags length, with phonetics and documented meanings.',
     breadcrumb: 'Pet Names',
     h1: 'Pet Names for Dogs and Cats',
     answerBox:
-      'A pet name works when it is short, easy to say sharply, and unlike every other name and command already used in the home. This generator covers {{total}} dog and cat names across {{styleCount}} styles, shows the documented meaning of each one, reads it aloud, and filters out names that would collide with your family, your other pets or your training cues.',
+      'A pet name works best when short, distinct, and easy to call. This random pet name generator covers {{total}} dog and cat names across {{styleCount}} styles, shows documented meanings, reads names aloud, prevents household sound clashes, and sizes names for custom engraved pet name tags.',
     generator: {
       heading: 'Generate pet names',
       intro:
-        'Switch between dogs, cats, or both at once. Filters, meanings, pronunciation and the conflict checker all work the same way across species.',
+        'Switch between dogs, cats, or both at once. Use our random pet name generator filters for gender, style, letter, or pet name tags length with instant phonetics.',
     },
     prose: {
       heading: 'Naming a pet in a household that already has names in it',

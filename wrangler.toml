@@ -4,9 +4,13 @@ name = "perfectpetnamegenerator"
 compatibility_date = "2026-09-04"
 
 # Disable the *.workers.dev route and preview URLs — serve only from the
-# custom domain (perfectpetnamegenerator.com, configured in the Cloudflare dashboard).
+# custom domain (perfectpetnamegenerator.com).
 workers_dev = false
 preview_urls = false
+
+routes = [
+  { pattern = "perfectpetnamegenerator.com", custom_domain = true }
+]
 
 [assets]
 directory = "./dist"
